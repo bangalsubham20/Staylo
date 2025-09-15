@@ -1,0 +1,160 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 220 100% 2%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 100% 2%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 100% 2%;
+
+    --primary: 15 100% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 15 100% 70%;
+    --primary-dark: 15 100% 50%;
+
+    --secondary: 220 15% 70%;
+    --secondary-foreground: 220 100% 2%;
+
+    --muted: 220 15% 70%;
+    --muted-foreground: 220 10% 40%;
+
+    --accent: 15 100% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 90%;
+    --input: 220 15% 95%;
+    --ring: 15 100% 60%;
+
+    --success: 145 54% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 36 100% 65%;
+    --warning-foreground: 0 0% 10%;
+
+    --gradient-primary: linear-gradient(135deg, #FA5A2A, #FF7A4A);
+    --gradient-secondary: linear-gradient(135deg, #A4A8B5, #FA5A2A);
+    --gradient-hero: linear-gradient(135deg, #FA5A2A 0%, #A4A8B5 100%);
+
+    --shadow-soft: 0 2px 6px rgba(3, 7, 17, 0.05);
+    --shadow-medium: 0 4px 12px rgba(3, 7, 17, 0.08);
+    --shadow-large: 0 8px 24px rgba(3, 7, 17, 0.12);
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 220 100% 2%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 15 100% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 15% 70%;
+    --sidebar-accent-foreground: 220 100% 2%;
+    --sidebar-border: 220 15% 20%;
+    --sidebar-ring: 15 100% 60%;
+  }
+
+  .dark {
+    --background: 220 100% 2%;
+    --foreground: 0 0% 100%;
+
+    --card: 220 100% 5%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 220 100% 2%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 15 100% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 15 100% 70%;
+    --primary-dark: 15 100% 50%;
+
+    --secondary: 220 15% 20%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 220 15% 20%;
+    --muted-foreground: 220 15% 70%;
+
+    --accent: 15 100% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 70% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 20%;
+    --input: 220 15% 15%;
+    --ring: 15 100% 60%;
+    --sidebar-background: 220 100% 2%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 15 100% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 15% 20%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 220 15% 20%;
+    --sidebar-ring: 15 100% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    letter-spacing: -0.01em;
+  }
+  
+  /* Improved typography */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-medium tracking-tight;
+  }
+  
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+    letter-spacing: -0.02em;
+  }
+  
+  h2 {
+    @apply text-3xl md:text-4xl;
+    letter-spacing: -0.015em;
+  }
+  
+  h3 {
+    @apply text-2xl md:text-3xl;
+    letter-spacing: -0.01em;
+  }
+  
+  p {
+    @apply leading-relaxed;
+  }
+  
+  /* Editorial spacing */
+  section, .section {
+    @apply my-12 md:my-16 lg:my-24;
+  }
+  
+  .container {
+    @apply px-4 md:px-6 lg:px-8 max-w-6xl mx-auto;
+  }
+  
+  /* Smooth transitions */
+  *, *::before, *::after {
+    transition: background-color 0.2s ease-in-out, 
+                border-color 0.2s ease-in-out,
+                color 0.2s ease-in-out,
+                opacity 0.2s ease-in-out,
+                box-shadow 0.2s ease-in-out;
+  }
+}
