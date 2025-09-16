@@ -64,6 +64,32 @@ const Header = () => {
                 <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary rounded-full animate-pulse"></span>
               )}
             </Link>
+            <Link
+              to="/about"
+              className={`relative text-sm font-medium transition-all duration-300 hover:text-primary hover:scale-105 ${
+                location.pathname === '/about'
+                  ? 'text-primary'
+                  : 'text-muted-foreground'
+              }`}
+            >
+              About
+              {location.pathname === '/about' && (
+                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary rounded-full animate-pulse"></span>
+              )}
+            </Link>
+            <Link
+              to="/contact"
+              className={`relative text-sm font-medium transition-all duration-300 hover:text-primary hover:scale-105 ${
+                location.pathname === '/contact'
+                  ? 'text-primary'
+                  : 'text-muted-foreground'
+              }`}
+            >
+              Contact
+              {location.pathname === '/contact' && (
+                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary rounded-full animate-pulse"></span>
+              )}
+            </Link>
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
@@ -136,6 +162,38 @@ const Header = () => {
                 <Building className="w-4 h-4" />
                 Properties
                 {location.pathname.startsWith('/properties') && (
+                  <div className="ml-auto w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full animate-pulse"></div>
+                )}
+              </div>
+            </Link>
+            <Link
+              to="/about"
+              className={`px-3 py-3 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:scale-105 hover:shadow-sm ${
+                location.pathname === '/about' 
+                  ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
+                  : 'text-gray-700 dark:text-gray-300'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <User className="w-4 h-4" />
+                About
+                {location.pathname === '/about' && (
+                  <div className="ml-auto w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full animate-pulse"></div>
+                )}
+              </div>
+            </Link>
+            <Link
+              to="/contact"
+              className={`px-3 py-3 rounded-lg text-sm font-medium transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:scale-105 hover:shadow-sm ${
+                location.pathname === '/contact' 
+                  ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20' 
+                  : 'text-gray-700 dark:text-gray-300'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <User className="w-4 h-4" />
+                Contact
+                {location.pathname === '/contact' && (
                   <div className="ml-auto w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full animate-pulse"></div>
                 )}
               </div>
