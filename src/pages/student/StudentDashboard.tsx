@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import Header from "@/components/Layout/Header";
+import Navbar from "@/components/Layout/Navbar";
 import { 
   Search, 
   Heart, 
@@ -54,7 +54,7 @@ const StudentDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary/10 via-white to-primary/5 dark:from-background-dark dark:via-background-dark dark:to-background-dark">
-      <Header />
+      <Navbar />
       
       <div className="container mx-auto px-4 py-8">
         <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>

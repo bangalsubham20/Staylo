@@ -7,8 +7,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import Header from "@/components/Layout/Header";
-import Footer from "@/components/Layout/Footer";
+import PageLayout from "@/components/Layout/PageLayout";
 import { 
   CreditCard, 
   Smartphone, 
@@ -64,9 +63,7 @@ const Payment = () => {
   };
 
   return (
-    <div className="min-h-screen bg-secondary/5 dark:bg-background-dark">
-      <Header />
-      
+    <PageLayout>
       <div className="container mx-auto px-4 py-8">
         <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           {/* Back Button */}
@@ -306,9 +303,7 @@ const Payment = () => {
           </div>
         </div>
       </div>
-
-      <Footer />
-    </div>
+    </PageLayout>
   );
 };
 

@@ -3,8 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import Header from "@/components/Layout/Header";
-import Footer from "@/components/Layout/Footer";
+import PageLayout from "@/components/Layout/PageLayout";
 import { 
   CheckCircle, 
   Calendar, 
@@ -65,9 +64,7 @@ const BookingSuccess = () => {
   };
 
   return (
-    <div className="min-h-screen bg-secondary/5 dark:bg-background-dark">
-      <Header />
-      
+    <PageLayout>
       <div className="container mx-auto px-4 py-8">
         <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <div className="max-w-4xl mx-auto">
@@ -300,9 +297,7 @@ const BookingSuccess = () => {
           </div>
         </div>
       </div>
-
-      <Footer />
-    </div>
+    </PageLayout>
   );
 };
 

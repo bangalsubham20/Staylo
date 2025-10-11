@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Header from "@/components/Layout/Header";
+import PageLayout from "@/components/Layout/PageLayout";
 import { User, Mail, Lock, Phone, Building, Eye, EyeOff, ArrowRight, CheckCircle, MapPin, Briefcase } from "lucide-react";
 
 const OwnerSignup = () => {
@@ -53,10 +53,9 @@ const OwnerSignup = () => {
   const isPasswordMatch = formData.password === formData.confirmPassword && formData.confirmPassword.length > 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-white to-secondary/5 dark:from-background-dark dark:via-background-dark dark:to-background-dark">
-      <Header />
-      
-      <div className="container mx-auto px-4 py-8">
+    <PageLayout showFooter={false}>
+      <div className="min-h-screen bg-gradient-to-br from-primary/10 via-white to-secondary/5 dark:from-background-dark dark:via-background-dark dark:to-background-dark">
+        <div className="container mx-auto px-4 py-8">
         <div className={`max-w-2xl mx-auto transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <Card className="shadow-2xl border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
             <CardHeader className="text-center pb-8">
@@ -257,7 +256,8 @@ const OwnerSignup = () => {
           </Card>
         </div>
       </div>
-    </div>
+      </div>
+    </PageLayout>
   );
 };
 

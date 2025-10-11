@@ -4,10 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import Header from "@/components/Layout/Header";
-import Footer from "@/components/Layout/Footer";
+import PageLayout from "@/components/Layout/PageLayout";
 import PropertyCard from "@/components/PropertyCard";
-import MobileFilters from "@/components/MobileFilters";
 import { Search, Filter, MapPin } from "lucide-react";
 
 const Properties = () => {
@@ -87,52 +85,21 @@ const Properties = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-secondary/5 dark:bg-background-dark">
-      <Header />
-      
+    <PageLayout>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
         {/* Search and Filters */}
         <div className="mb-6 sm:mb-8">
-          <div className="flex items-center justify-between flex-wrap gap-4 mb-4 sm:mb-6">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
-              Find Your Perfect Accommodation
-            </h1>
-            
-            {/* Mobile Filters */}
-            <MobileFilters 
-              onApplyFilters={(filters) => {
-                setSearchQuery(filters.searchQuery);
-                setLocation(filters.location);
-                setPropertyType(filters.propertyType);
-                setPriceRange(filters.priceRange);
-              }}
-              initialFilters={{
-                searchQuery,
-                location,
-                propertyType,
-                priceRange
-              }}
-            />
-          </div>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 text-center sm:text-left text-foreground">
+            Find Your Perfect Accommodation
+          </h1>
           
-          {/* Mobile Search */}
-          <div className="relative mb-4 sm:hidden">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search properties..."
-              className="pl-10 h-10 pr-4"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          
-          <Card className="p-3 sm:p-4 lg:p-6 shadow-medium hidden sm:block">
+          <Card className="p-3 sm:p-4 lg:p-6 shadow-medium">
             <CardContent className="p-0">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
-                <div className="col-span-1 sm:col-span-2 xl:col-span-2">
+                <div className="sm:col-span-2 xl:col-span-2">
                   <Label htmlFor="search" className="text-sm font-medium text-foreground">Search Properties</Label>
                   <div className="relative mt-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="search"
                       placeholder="Search by location, college..."
@@ -190,13 +157,15 @@ const Properties = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-4 sm:mt-6">
-                <Button className="flex items-center justify-center gap-2 w-full sm:w-auto bg-primary hover:bg-primary-dark text-white h-11">
+                <Button className="flex items-center justify-center gap-2 w-full sm:w-auto bg-primary hover:bg-primary-dark">
                   <Filter className="w-4 h-4" />
-                  <span>Apply Filters</span>
+                  <span className="hidden sm:inline">Apply Filters</span>
+                  <span className="sm:hidden">Apply</span>
                 </Button>
-                <Button variant="outline" className="flex items-center justify-center gap-2 w-full sm:w-auto h-11">
+                <Button variant="outline" className="flex items-center justify-center gap-2 w-full sm:w-auto">
                   <MapPin className="w-4 h-4" />
-                  <span>Map View</span>
+                  <span className="hidden sm:inline">Map View</span>
+                  <span className="sm:hidden">Map</span>
                 </Button>
               </div>
             </CardContent>
@@ -209,7 +178,7 @@ const Properties = () => {
             Showing {properties.length} properties
           </p>
           <Select defaultValue="recommended">
-            <SelectTrigger className="w-full sm:w-[180px] md:w-[200px] h-10">
+            <SelectTrigger className="w-full sm:w-48">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -223,22 +192,20 @@ const Properties = () => {
         </div>
 
         {/* Property Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-3 gap-4 sm:gap-6">
           {properties.map((property) => (
             <PropertyCard key={property.id} {...property} />
           ))}
         </div>
 
         {/* Load More */}
-        <div className="text-center mt-8 sm:mt-10 md:mt-12">
-          <Button variant="outline" size="lg" className="w-full sm:w-auto px-8 py-6 text-base">
+        <div className="text-center mt-8 sm:mt-12">
+          <Button variant="outline" size="lg" className="w-full sm:w-auto">
             Load More Properties
           </Button>
         </div>
       </div>
-
-      <Footer />
-    </div>
+    </PageLayout>
   );
 };
 

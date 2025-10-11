@@ -8,8 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import Header from "@/components/Layout/Header";
-import Footer from "@/components/Layout/Footer";
+import PageLayout from "@/components/Layout/PageLayout";
 import { 
   User, 
   Mail, 
@@ -127,9 +126,7 @@ const OwnerProfile = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-secondary/5 dark:bg-background-dark">
-      <Header />
-      
+    <PageLayout>
       <div className="container mx-auto px-4 py-8">
         <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           {/* Header */}
@@ -615,9 +612,7 @@ const OwnerProfile = () => {
           </div>
         </div>
       </div>
-
-      <Footer />
-    </div>
+    </PageLayout>
   );
 };
 

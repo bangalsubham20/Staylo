@@ -2,8 +2,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import Header from "@/components/Layout/Header";
-import Footer from "@/components/Layout/Footer";
+import PageLayout from "@/components/Layout/PageLayout";
 import PropertyCard from "@/components/PropertyCard";
 import { Search, Shield, MapPin, Users, ArrowRight, Star, TrendingUp, Sparkles } from "lucide-react";
 
@@ -83,9 +82,8 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
-      <Header />
-      
+    <PageLayout>
+      <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
         {/* Hero Section */}
         <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary-light to-secondary dark:from-background-dark dark:via-background-dark dark:to-background-dark text-white">
         {/* Animated background elements */}
@@ -334,9 +332,8 @@ const Index = () => {
           </div>
         </div>
       </section>
-
-      <Footer />
-    </div>
+      </div>
+    </PageLayout>
   );
 };
 

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Header from "@/components/Layout/Header";
+import Navbar from "@/components/Layout/Navbar";
 import { Mail, Lock, Building, Eye, EyeOff, ArrowRight, TrendingUp } from "lucide-react";
 
 const OwnerLogin = () => {
@@ -45,7 +45,7 @@ const OwnerLogin = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/10 via-white to-secondary/5 dark:from-background-dark dark:via-background-dark dark:to-background-dark">
-      <Header />
+      <Navbar />
       
       <div className="container mx-auto px-4 py-16">
         <div className={`max-w-md mx-auto transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>

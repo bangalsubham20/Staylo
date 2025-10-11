@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Header from "@/components/Layout/Header";
-import Footer from "@/components/Layout/Footer";
+import PageLayout from "@/components/Layout/PageLayout";
 import { 
   Users, 
   Target, 
@@ -14,7 +13,8 @@ import {
   Star,
   TrendingUp,
   CheckCircle,
-  ArrowRight
+  ArrowRight,
+  MapPin
 } from "lucide-react";
 
 const About = () => {
@@ -76,9 +76,7 @@ const About = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-secondary/5 dark:bg-background-dark">
-      <Header />
-      
+    <PageLayout>
       <div className="container mx-auto px-4 py-8">
         <div className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           {/* Hero Section */}
@@ -329,9 +327,7 @@ const About = () => {
           </Card>
         </div>
       </div>
-
-      <Footer />
-    </div>
+    </PageLayout>
   );
 };
 
