@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import PageLayout from "@/components/Layout/PageLayout";
+import { getProperty } from "@/data/properties";
 import { 
   MapPin, 
   Star, 
@@ -37,23 +38,23 @@ const PropertyDetail = () => {
     setIsVisible(true);
   }, []);
 
-  // Mock property data - in real app, fetch by ID
+  const propertySummary = getProperty(id);
   const property = {
-    id: id || "1",
-    title: "Modern PG near IIT Campus",
-    location: "Powai, Mumbai",
+    id: propertySummary.id,
+    title: propertySummary.title,
+    location: propertySummary.location,
     address: "123, Hiranandani Gardens, Powai, Mumbai - 400076",
-    price: 15000,
-    rating: 4.8,
-    reviewCount: 124,
-    type: "PG",
+    price: propertySummary.price,
+    rating: propertySummary.rating,
+    reviewCount: propertySummary.reviewCount,
+    type: propertySummary.type,
     images: [
-      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      propertySummary.image,
       "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1555854877-bab0e460b1e5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     ],
-    amenities: ["WiFi", "Meals", "Parking", "Gym", "Laundry", "Security", "Study Room"],
+    amenities: [...new Set([...propertySummary.amenities, "Gym", "Laundry", "Security", "Study Room"])],
     description: "A modern and well-furnished PG accommodation located in the heart of Powai, just 5 minutes walk from IIT Mumbai. Perfect for students and working professionals looking for a comfortable and secure living space.",
     owner: {
       name: "Rajesh Kumar",

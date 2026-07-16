@@ -8,6 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import PageLayout from "@/components/Layout/PageLayout";
+import { getProperty } from "@/data/properties";
 import { 
   CreditCard, 
   Smartphone, 
@@ -30,15 +31,15 @@ const Payment = () => {
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [agreeToTerms, setAgreeToTerms] = useState(false);
 
-  // Mock property data - in real app, fetch by ID
+  const propertySummary = getProperty(id);
   const property = {
-    id: id || "1",
-    title: "Modern PG near IIT Campus",
-    location: "Powai, Mumbai",
-    price: 15000,
+    id: propertySummary.id,
+    title: propertySummary.title,
+    location: propertySummary.location,
+    price: propertySummary.price,
     deposit: 30000,
     maintenance: 2000,
-    image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+    image: propertySummary.image
   };
 
   const totalAmount = property.price + property.deposit + property.maintenance;
