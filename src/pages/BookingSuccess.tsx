@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import PageLayout from "@/components/Layout/PageLayout";
+import { getBookingByCode } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
 import { 
   CheckCircle, 
   Calendar, 
@@ -20,38 +22,66 @@ import {
 } from "lucide-react";
 
 const BookingSuccess = () => {
-  const { id } = useParams();
+  const { id: bookingCode } = useParams();
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
 
-  // Mock booking data - in real app, fetch by ID
-  const booking = {
-    id: "BK" + Math.random().toString(36).substr(2, 9).toUpperCase(),
-    property: {
-      id: id || "1",
-      title: "Modern PG near IIT Campus",
-      location: "Powai, Mumbai",
-      address: "123, Hiranandani Gardens, Powai, Mumbai - 400076",
-      image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
-    },
-    owner: {
-      name: "Rajesh Kumar",
-      phone: "+91 98765 43210",
-      email: "rajesh.kumar@example.com"
-    },
-    payment: {
-      amount: 47000,
-      method: "Credit Card",
-      transactionId: "TXN" + Math.random().toString(36).substr(2, 9).toUpperCase(),
-      date: new Date().toLocaleDateString()
-    },
-    moveInDate: "2024-03-01",
-    status: "Confirmed"
-  };
+  // Fetch real booking details from API
+  const { data: bookingData, isLoading, error } = useQuery({
+    queryKey: ['booking', bookingCode],
+    queryFn: () => getBookingByCode(bookingCode as string),
+    enabled: !!bookingCode
+  });
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
+
+  if (isLoading) {
+    return (
+      <PageLayout>
+        <div className="container mx-auto px-4 py-32 flex justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
+        </div>
+      </PageLayout>
+    );
+  }
+
+  if (error || !bookingData) {
+    return (
+      <PageLayout>
+        <div className="container mx-auto px-4 py-32 text-center">
+          <h2 className="text-2xl font-bold text-red-500">Booking not found</h2>
+          <Button onClick={() => navigate('/properties')} className="mt-4">Back to Properties</Button>
+        </div>
+      </PageLayout>
+    );
+  }
+
+  // Map API response to UI model
+  const booking = {
+    id: bookingData.bookingCode,
+    property: {
+      id: bookingData.property.id,
+      title: bookingData.property.title,
+      location: bookingData.property.location,
+      address: bookingData.property.location + " (Campus Area)", // fallback
+      image: bookingData.property.image
+    },
+    owner: {
+      name: "Rajesh Kumar", // fallback mock owner details
+      phone: "+91 98765 43210",
+      email: "rajesh.kumar@example.com"
+    },
+    payment: {
+      amount: bookingData.amount,
+      method: bookingData.paymentMethod.toUpperCase(),
+      transactionId: bookingData.transactionId,
+      date: new Date(bookingData.createdAt || Date.now()).toLocaleDateString()
+    },
+    moveInDate: bookingData.moveInDate,
+    status: bookingData.status
+  };
 
   const handleDownloadReceipt = () => {
     // In real app, generate and download PDF receipt

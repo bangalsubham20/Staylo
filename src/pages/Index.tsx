@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import PageLayout from "@/components/Layout/PageLayout";
 import PropertyCard from "@/components/PropertyCard";
-import { Search, Shield, MapPin, Users, ArrowRight, Star, TrendingUp, Sparkles, Building, CheckCircle2 } from "lucide-react";
-import { properties } from "@/data/properties";
+import { Search, Shield, MapPin, Users, ArrowRight, Star, TrendingUp, Sparkles, Building, CheckCircle2, Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getProperties } from "@/lib/api";
 
 const Index = () => {
   const [scrollY, setScrollY] = useState(0);
@@ -15,6 +16,11 @@ const Index = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const { data: properties = [], isLoading } = useQuery({
+    queryKey: ['properties'],
+    queryFn: getProperties
+  });
 
   const featuredProperties = properties.slice(0, 3);
 
@@ -214,11 +220,17 @@ const Index = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-              {featuredProperties.map((property) => (
-                <div key={property.id} className="h-full">
-                  <PropertyCard {...property} />
+              {isLoading ? (
+                <div className="col-span-full flex justify-center py-12">
+                  <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
                 </div>
-              ))}
+              ) : (
+                featuredProperties.map((property) => (
+                  <div key={property.id} className="h-full">
+                    <PropertyCard {...property} />
+                  </div>
+                ))
+              )}
             </div>
 
             <div className="text-center">

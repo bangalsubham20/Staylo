@@ -1,0 +1,139 @@
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8081/api";
+
+export interface Property {
+  id: string;
+  title: string;
+  location: string;
+  price: number;
+  rating: number;
+  reviewCount: number;
+  image: string;
+  amenities: string[];
+  type: string;
+  badge?: string;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: "STUDENT" | "OWNER";
+}
+
+// Helper to make authorized fetch requests
+const authFetch = async (url: string, options: RequestInit = {}): Promise<Response> => {
+  const token = localStorage.getItem("staylo_token");
+  const headers = new Headers(options.headers || {});
+  
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+  
+  return fetch(url, { ...options, headers });
+};
+
+export const getProperties = async (): Promise<Property[]> => {
+  const response = await fetch(`${API_BASE_URL}/properties`);
+  if (!response.ok) {
+    throw new Error('Network response was not ok');
+  }
+  const data = await response.json();
+  
+  return data.map((p: any) => ({
+    ...p,
+    id: p.id.toString(),
+  }));
+};
+
+export const getProperty = async (id: string): Promise<Property> => {
+  const response = await fetch(`${API_BASE_URL}/properties/${id}`);
+  if (!response.ok) {
+    throw new Error('Property not found');
+  }
+  const data = await response.json();
+  
+  return {
+    ...data,
+    id: data.id.toString(),
+  };
+};
+
+// Auth API calls
+export const loginUser = async (email: string, password: string) => {
+  const response = await fetch(`${API_BASE_URL}/auth/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({}));
+    throw new Error(errData.message || "Failed to log in");
+  }
+
+  return response.json(); // returns token and user details
+};
+
+export const registerUser = async (userData: any) => {
+  const response = await fetch(`${API_BASE_URL}/auth/register`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(userData),
+  });
+
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({}));
+    throw new Error(errData.message || "Failed to register");
+  }
+
+  return response.json();
+};
+
+// Booking types & API calls
+export interface Booking {
+  id: number;
+  bookingCode: string;
+  property: Property;
+  user: User;
+  paymentMethod: string;
+  transactionId: string;
+  amount: number;
+  moveInDate: string;
+  status: string;
+  createdAt: string;
+}
+
+export const createBooking = async (bookingData: {
+  propertyId: number;
+  paymentMethod: string;
+  amount: number;
+  moveInDate: string;
+}): Promise<Booking> => {
+  const response = await authFetch(`${API_BASE_URL}/bookings`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(bookingData),
+  });
+
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({}));
+    throw new Error(errData.message || "Failed to create booking");
+  }
+
+  return response.json();
+};
+
+export const getBookingByCode = async (bookingCode: string): Promise<Booking> => {
+  const response = await authFetch(`${API_BASE_URL}/bookings/${bookingCode}`);
+  if (!response.ok) {
+    throw new Error("Booking not found");
+  }
+  return response.json();
+};
+

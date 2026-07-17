@@ -5,10 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import PageLayout from "@/components/Layout/PageLayout";
+import { useAuth } from "@/context/AuthContext";
+import { loginUser } from "@/lib/api";
+import { useToast } from "@/components/ui/use-toast";
 import { Mail, Lock, GraduationCap, Eye, EyeOff, ArrowRight } from "lucide-react";
 
 const StudentLogin = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     email: "",
     password: ""
@@ -25,15 +30,35 @@ const StudentLogin = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // TODO: Implement login logic with Supabase
-    console.log("Student login:", formData);
-    
-    // Redirect to dashboard after successful login
-    navigate('/student/dashboard');
-    setIsLoading(false);
+    try {
+      const data = await loginUser(formData.email, formData.password);
+      
+      if (data.role !== "STUDENT") {
+        throw new Error("This account is not registered as a Student.");
+      }
+
+      login(data.accessToken, {
+        id: data.id.toString(),
+        name: data.name,
+        email: data.email,
+        role: data.role,
+      });
+
+      toast({
+        title: "Welcome back!",
+        description: `Logged in successfully as ${data.name}.`,
+      });
+
+      navigate('/student/dashboard');
+    } catch (err: any) {
+      toast({
+        title: "Login Failed",
+        description: err.message || "Invalid email or password",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

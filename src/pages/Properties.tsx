@@ -5,8 +5,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import PageLayout from "@/components/Layout/PageLayout";
 import PropertyCard from "@/components/PropertyCard";
-import { properties } from "@/data/properties";
 import { Filter, MapPin, Search, SlidersHorizontal, X, LayoutGrid, List } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getProperties } from "@/lib/api";
 
 const Properties = () => {
   const [query, setQuery] = useState("");
@@ -17,13 +18,11 @@ const Properties = () => {
   const [visibleCount, setVisibleCount] = useState(6);
   const [showMap, setShowMap] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [isLoading, setIsLoading] = useState(true);
 
-  // Simulate initial loading
-  useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 800);
-    return () => clearTimeout(timer);
-  }, []);
+  const { data: properties = [], isLoading } = useQuery({
+    queryKey: ['properties'],
+    queryFn: getProperties
+  });
 
   const filteredProperties = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -47,7 +46,7 @@ const Properties = () => {
       if (sort === "rating") return b.rating - a.rating;
       return b.reviewCount - a.reviewCount; // recommended
     });
-  }, [location, priceRange, query, sort, type]);
+  }, [location, priceRange, query, sort, type, properties]);
 
   const clearFilters = () => {
     setQuery("");

@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/hooks/use-theme";
 import PageTransition from "@/components/PageTransition";
+import { AuthProvider } from "@/context/AuthContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Properties from "./pages/Properties";
@@ -30,37 +31,39 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
-          <PageTransition>
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/" element={<Index />} />
-              <Route path="/properties" element={<Properties />} />
-              <Route path="/property/:id" element={<PropertyDetail />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              
-              {/* Student Routes */}
-              <Route path="/student/signup" element={<StudentSignup />} />
-              <Route path="/student/login" element={<StudentLogin />} />
-              <Route path="/student/dashboard" element={<StudentDashboard />} />
-              <Route path="/student/profile" element={<StudentProfile />} />
-              
-              {/* Owner Routes */}
-              <Route path="/owner/signup" element={<OwnerSignup />} />
-              <Route path="/owner/login" element={<OwnerLogin />} />
-              <Route path="/owner/dashboard" element={<OwnerDashboard />} />
-              <Route path="/owner/profile" element={<OwnerProfile />} />
-              
-              {/* Payment & Booking Routes */}
-              <Route path="/payment/:id" element={<Payment />} />
-              <Route path="/booking-success/:id" element={<BookingSuccess />} />
-              
-              {/* Catch-all Route */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </PageTransition>
-        </BrowserRouter>
+        <AuthProvider>
+          <BrowserRouter>
+            <PageTransition>
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<Index />} />
+                <Route path="/properties" element={<Properties />} />
+                <Route path="/property/:id" element={<PropertyDetail />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                
+                {/* Student Routes */}
+                <Route path="/student/signup" element={<StudentSignup />} />
+                <Route path="/student/login" element={<StudentLogin />} />
+                <Route path="/student/dashboard" element={<StudentDashboard />} />
+                <Route path="/student/profile" element={<StudentProfile />} />
+                
+                {/* Owner Routes */}
+                <Route path="/owner/signup" element={<OwnerSignup />} />
+                <Route path="/owner/login" element={<OwnerLogin />} />
+                <Route path="/owner/dashboard" element={<OwnerDashboard />} />
+                <Route path="/owner/profile" element={<OwnerProfile />} />
+                
+                {/* Payment & Booking Routes */}
+                <Route path="/payment/:id" element={<Payment />} />
+                <Route path="/booking-success/:id" element={<BookingSuccess />} />
+                
+                {/* Catch-all Route */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </PageTransition>
+          </BrowserRouter>
+        </AuthProvider>
       </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>

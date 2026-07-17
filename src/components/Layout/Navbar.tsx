@@ -1,11 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Home, User, Building, Menu, X, Sparkles } from "lucide-react";
+import { Home, User, Building, Menu, X, Sparkles, LogOut } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { useAuth } from "@/context/AuthContext";
 
 const Navbar = () => {
-  const location = useLocation();
+  const { user, isAuthenticated, logout } = useAuth();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -99,36 +100,44 @@ const Navbar = () => {
 
           {/* Desktop Auth */}
           <div className="hidden md:flex items-center gap-2">
-            <Link to="/student/login">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 gap-1.5"
-              >
-                <User className="w-3.5 h-3.5" />
-                <span className="hidden lg:inline">Student</span>
-                <span className="lg:hidden">Login</span>
-              </Button>
-            </Link>
-            <Link to="/owner/login">
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-sm text-muted-foreground hover:text-foreground gap-1.5"
-              >
-                <Building className="w-3.5 h-3.5" />
-                <span>Owner</span>
-              </Button>
-            </Link>
-            <Link to="/student/signup">
-              <Button
-                size="sm"
-                className="text-sm font-semibold bg-gradient-to-r from-orange-500 to-orange-400 hover:from-orange-600 hover:to-orange-500 text-white shadow-md hover:shadow-orange-500/30 hover:shadow-lg transition-all duration-300 gap-1.5 px-5"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                Get Started
-              </Button>
-            </Link>
+            {isAuthenticated && user ? (
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-semibold bg-secondary/80 px-3 py-1.5 rounded-lg border border-border">
+                  Hi, {user.name} ({user.role})
+                </span>
+                <Button
+                  onClick={logout}
+                  variant="ghost"
+                  size="sm"
+                  className="text-sm text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 gap-1.5"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 gap-1.5"
+                  >
+                    <User className="w-3.5 h-3.5" />
+                    <span>Login</span>
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button
+                    size="sm"
+                    className="text-sm font-semibold bg-gradient-to-r from-orange-500 to-orange-400 hover:from-orange-600 hover:to-orange-500 text-white shadow-md hover:shadow-orange-500/30 hover:shadow-lg transition-all duration-300 gap-1.5 px-5"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    Get Started
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -160,21 +169,29 @@ const Navbar = () => {
             ))}
 
             <div className="mt-3 pt-3 border-t border-border flex flex-col gap-2">
-              <Link to="/student/login">
-                <Button variant="outline" className="w-full justify-start gap-2">
-                  <User className="w-4 h-4" /> Student Login
-                </Button>
-              </Link>
-              <Link to="/owner/login">
-                <Button variant="outline" className="w-full justify-start gap-2">
-                  <Building className="w-4 h-4" /> Owner Login
-                </Button>
-              </Link>
-              <Link to="/student/signup">
-                <Button className="w-full font-semibold bg-gradient-to-r from-orange-500 to-orange-400 hover:from-orange-600 hover:to-orange-500 text-white gap-2">
-                  <Sparkles className="w-4 h-4" /> Get Started Free
-                </Button>
-              </Link>
+              {isAuthenticated && user ? (
+                <>
+                  <div className="text-sm font-semibold px-4 py-2 bg-secondary rounded-lg">
+                    Hi, {user.name} ({user.role})
+                  </div>
+                  <Button onClick={logout} variant="outline" className="w-full justify-start text-red-500 hover:text-red-600 gap-2">
+                    <LogOut className="w-4 h-4" /> Logout
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link to="/login">
+                    <Button variant="outline" className="w-full justify-start gap-2">
+                      <User className="w-4 h-4" /> Login
+                    </Button>
+                  </Link>
+                  <Link to="/signup">
+                    <Button className="w-full font-semibold bg-gradient-to-r from-orange-500 to-orange-400 hover:from-orange-600 hover:to-orange-500 text-white gap-2">
+                      <Sparkles className="w-4 h-4" /> Get Started Free
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

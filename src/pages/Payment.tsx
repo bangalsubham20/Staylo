@@ -8,7 +8,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import PageLayout from "@/components/Layout/PageLayout";
-import { getProperty } from "@/data/properties";
+import { getProperty, createBooking } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/components/ui/use-toast";
 import { 
   CreditCard, 
   Smartphone, 
@@ -26,12 +29,58 @@ import {
 const Payment = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { isAuthenticated, loading: authLoading } = useAuth();
+  const { toast } = useToast();
+
   const [isVisible, setIsVisible] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [agreeToTerms, setAgreeToTerms] = useState(false);
 
-  const propertySummary = getProperty(id);
+  // Fetch property details from API
+  const { data: propertySummary, isLoading: propertyLoading, error } = useQuery({
+    queryKey: ['property', id],
+    queryFn: () => getProperty(id as string),
+    enabled: !!id
+  });
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in as a student to book a property.",
+        variant: "destructive"
+      });
+      navigate("/student/login");
+    }
+  }, [isAuthenticated, authLoading, navigate, toast]);
+
+  if (authLoading || propertyLoading) {
+    return (
+      <PageLayout>
+        <div className="container mx-auto px-4 py-32 flex justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
+        </div>
+      </PageLayout>
+    );
+  }
+
+  if (error || !propertySummary) {
+    return (
+      <PageLayout>
+        <div className="container mx-auto px-4 py-32 text-center">
+          <h2 className="text-2xl font-bold text-red-500">Property not found</h2>
+          <Button onClick={() => navigate('/properties')} className="mt-4">Back to Properties</Button>
+        </div>
+      </PageLayout>
+    );
+  }
+
   const property = {
     id: propertySummary.id,
     title: propertySummary.title,
@@ -44,23 +93,43 @@ const Payment = () => {
 
   const totalAmount = property.price + property.deposit + property.maintenance;
 
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
-
   const handlePayment = async () => {
     if (!agreeToTerms) {
-      alert("Please agree to the terms and conditions");
+      toast({
+        title: "Agreement Required",
+        description: "Please agree to the terms and conditions to proceed.",
+        variant: "destructive"
+      });
       return;
     }
 
     setIsProcessing(true);
     
-    // Simulate payment processing
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    // Redirect to success page
-    navigate(`/booking-success/${property.id}`);
+    try {
+      // Call real backend booking API
+      const booking = await createBooking({
+        propertyId: Number(property.id),
+        paymentMethod,
+        amount: totalAmount,
+        moveInDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // 1 week from now
+      });
+
+      toast({
+        title: "Payment Successful",
+        description: "Your booking has been confirmed!",
+      });
+
+      // Redirect to success page with backend custom booking code
+      navigate(`/booking-success/${booking.bookingCode}`);
+    } catch (err: any) {
+      toast({
+        title: "Payment Failed",
+        description: err.message || "Failed to process booking. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (

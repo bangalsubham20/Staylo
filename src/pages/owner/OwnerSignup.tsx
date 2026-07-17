@@ -5,10 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import PageLayout from "@/components/Layout/PageLayout";
+import { registerUser } from "@/lib/api";
+import { useToast } from "@/components/ui/use-toast";
 import { User, Mail, Lock, Phone, Building, Eye, EyeOff, ArrowRight, CheckCircle, MapPin, Briefcase } from "lucide-react";
 
 const OwnerSignup = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -31,15 +34,30 @@ const OwnerSignup = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // TODO: Implement signup logic with Supabase
-    console.log("Owner signup:", formData);
-    
-    // Redirect to dashboard after successful signup
-    navigate('/owner/dashboard');
-    setIsLoading(false);
+    try {
+      await registerUser({
+        name: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+        phone: formData.phone,
+        role: "OWNER"
+      });
+
+      toast({
+        title: "Registration Successful!",
+        description: "Account created successfully. You can now log in.",
+      });
+
+      navigate('/owner/login');
+    } catch (err: any) {
+      toast({
+        title: "Registration Failed",
+        description: err.message || "Something went wrong. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

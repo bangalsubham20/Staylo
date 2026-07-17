@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import PageLayout from "@/components/Layout/PageLayout";
-import { getProperty } from "@/data/properties";
+import { getProperty } from "@/lib/api";
+import { useQuery } from "@tanstack/react-query";
 import { 
   MapPin, 
   Star, 
@@ -38,7 +39,33 @@ const PropertyDetail = () => {
     setIsVisible(true);
   }, []);
 
-  const propertySummary = getProperty(id);
+  const { data: propertySummary, isLoading, error } = useQuery({
+    queryKey: ['property', id],
+    queryFn: () => getProperty(id as string),
+    enabled: !!id
+  });
+
+  if (isLoading) {
+    return (
+      <PageLayout>
+        <div className="container mx-auto px-4 py-32 flex justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
+        </div>
+      </PageLayout>
+    );
+  }
+
+  if (error || !propertySummary) {
+    return (
+      <PageLayout>
+        <div className="container mx-auto px-4 py-32 text-center">
+          <h2 className="text-2xl font-bold text-red-500">Property not found</h2>
+          <Button onClick={() => navigate('/properties')} className="mt-4">Back to Properties</Button>
+        </div>
+      </PageLayout>
+    );
+  }
+
   const property = {
     id: propertySummary.id,
     title: propertySummary.title,
