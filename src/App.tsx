@@ -14,10 +14,13 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Payment from "./pages/Payment";
 import BookingSuccess from "./pages/BookingSuccess";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import StudentSignup from "./pages/student/StudentSignup";
 import StudentLogin from "./pages/student/StudentLogin";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentProfile from "./pages/student/StudentProfile";
+import MyBookings from "./pages/student/MyBookings";
 import OwnerSignup from "./pages/owner/OwnerSignup";
 import OwnerLogin from "./pages/owner/OwnerLogin";
 import OwnerDashboard from "./pages/owner/OwnerDashboard";
@@ -42,11 +45,16 @@ const App = () => (
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 
+                {/* Shared Auth Routes */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+
                 {/* Student Routes */}
                 <Route path="/student/signup" element={<StudentSignup />} />
                 <Route path="/student/login" element={<StudentLogin />} />
                 <Route path="/student/dashboard" element={<StudentDashboard />} />
                 <Route path="/student/profile" element={<StudentProfile />} />
+                <Route path="/student/bookings" element={<MyBookings />} />
                 
                 {/* Owner Routes */}
                 <Route path="/owner/signup" element={<OwnerSignup />} />

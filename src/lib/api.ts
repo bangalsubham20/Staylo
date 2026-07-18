@@ -137,3 +137,52 @@ export const getBookingByCode = async (bookingCode: string): Promise<Booking> =>
   return response.json();
 };
 
+// Fetch all bookings for the currently authenticated student
+export const getMyBookings = async (): Promise<Booking[]> => {
+  const response = await authFetch(`${API_BASE_URL}/bookings/my`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch bookings");
+  }
+  return response.json();
+};
+
+// ── Owner-specific types & API calls ────────────────────────────────
+
+export interface OwnerProperty extends Property {
+  status?: string;
+  views?: number;
+  inquiries?: number;
+}
+
+// Fetch properties listed by the currently authenticated owner
+export const getOwnerProperties = async (): Promise<OwnerProperty[]> => {
+  const response = await authFetch(`${API_BASE_URL}/properties/owner`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch your properties");
+  }
+  const data = await response.json();
+  return data.map((p: any) => ({
+    ...p,
+    id: p.id.toString(),
+  }));
+};
+
+// Delete a property owned by the current owner
+export const deleteOwnerProperty = async (id: string): Promise<void> => {
+  const response = await authFetch(`${API_BASE_URL}/properties/${id}`, {
+    method: "DELETE",
+  });
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({}));
+    throw new Error(errData.message || "Failed to delete property");
+  }
+};
+
+// Fetch bookings received on the owner's properties
+export const getOwnerBookings = async (): Promise<Booking[]> => {
+  const response = await authFetch(`${API_BASE_URL}/bookings/owner`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch bookings for your properties");
+  }
+  return response.json();
+};

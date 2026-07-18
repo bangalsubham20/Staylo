@@ -1,12 +1,24 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Home, User, Building, Menu, X, Sparkles, LogOut } from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Home, User, Building2, Menu, X, Sparkles, LogOut, LayoutDashboard } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useAuth } from "@/context/AuthContext";
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -17,6 +29,7 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Close mobile menu on route change
   useEffect(() => {
     setIsMobileOpen(false);
   }, [location.pathname]);
@@ -30,6 +43,24 @@ const Navbar = () => {
 
   const isActive = (to: string) =>
     to === "/" ? location.pathname === "/" : location.pathname.startsWith(to);
+
+  // Get role-specific dashboard & profile links
+  const dashboardPath = user?.role === "OWNER" ? "/owner/dashboard" : "/student/dashboard";
+  const profilePath = user?.role === "OWNER" ? "/owner/profile" : "/student/profile";
+
+  // Get user initials for avatar
+  const getInitials = (name: string) =>
+    name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
   return (
     <nav
@@ -101,20 +132,70 @@ const Navbar = () => {
           {/* Desktop Auth */}
           <div className="hidden md:flex items-center gap-2">
             {isAuthenticated && user ? (
-              <div className="flex items-center gap-4">
-                <span className="text-sm font-semibold bg-secondary/80 px-3 py-1.5 rounded-lg border border-border">
-                  Hi, {user.name} ({user.role})
-                </span>
-                <Button
-                  onClick={logout}
-                  variant="ghost"
-                  size="sm"
-                  className="text-sm text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 gap-1.5"
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    id="user-menu-trigger"
+                    className="flex items-center gap-2.5 px-2 py-1.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800/60 transition-all duration-200 group focus:outline-none"
+                  >
+                    <Avatar className="w-8 h-8 ring-2 ring-orange-500/30 group-hover:ring-orange-500/60 transition-all duration-200">
+                      <AvatarFallback className="bg-gradient-to-br from-orange-500 to-orange-600 text-white text-xs font-bold">
+                        {getInitials(user.name)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col items-start leading-none">
+                      <span className="text-sm font-semibold text-foreground max-w-[120px] truncate">
+                        {user.name.split(" ")[0]}
+                      </span>
+                      <span
+                        className={`text-[10px] font-medium uppercase tracking-wide ${
+                          user.role === "OWNER" ? "text-orange-500" : "text-blue-500"
+                        }`}
+                      >
+                        {user.role === "OWNER" ? "Property Owner" : "Student"}
+                      </span>
+                    </div>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="w-52 rounded-xl shadow-xl border border-border bg-popover/95 backdrop-blur-lg p-1.5"
+                  sideOffset={8}
                 >
-                  <LogOut className="w-3.5 h-3.5" />
-                  Logout
-                </Button>
-              </div>
+                  <DropdownMenuLabel className="px-3 py-2">
+                    <p className="text-sm font-semibold truncate">{user.name}</p>
+                    <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem asChild className="rounded-lg cursor-pointer">
+                      <Link to={dashboardPath} className="flex items-center gap-2.5 px-3 py-2">
+                        <LayoutDashboard className="w-4 h-4 text-orange-500" />
+                        <span>Dashboard</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild className="rounded-lg cursor-pointer">
+                      <Link to={profilePath} className="flex items-center gap-2.5 px-3 py-2">
+                        {user.role === "OWNER" ? (
+                          <Building2 className="w-4 h-4 text-orange-500" />
+                        ) : (
+                          <User className="w-4 h-4 text-blue-500" />
+                        )}
+                        <span>Profile</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    id="logout-btn"
+                    onClick={handleLogout}
+                    className="rounded-lg cursor-pointer text-red-500 focus:text-red-600 focus:bg-red-50 dark:focus:bg-red-500/10 px-3 py-2 gap-2.5"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <>
                 <Link to="/login">
@@ -171,11 +252,43 @@ const Navbar = () => {
             <div className="mt-3 pt-3 border-t border-border flex flex-col gap-2">
               {isAuthenticated && user ? (
                 <>
-                  <div className="text-sm font-semibold px-4 py-2 bg-secondary rounded-lg">
-                    Hi, {user.name} ({user.role})
+                  {/* Mobile User Info */}
+                  <div className="flex items-center gap-3 px-4 py-3 bg-secondary/60 rounded-xl">
+                    <Avatar className="w-10 h-10 ring-2 ring-orange-500/30">
+                      <AvatarFallback className="bg-gradient-to-br from-orange-500 to-orange-600 text-white text-sm font-bold">
+                        {getInitials(user.name)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="text-sm font-semibold">{user.name}</p>
+                      <p
+                        className={`text-xs font-medium uppercase tracking-wide ${
+                          user.role === "OWNER" ? "text-orange-500" : "text-blue-500"
+                        }`}
+                      >
+                        {user.role === "OWNER" ? "Property Owner" : "Student"}
+                      </p>
+                    </div>
                   </div>
-                  <Button onClick={logout} variant="outline" className="w-full justify-start text-red-500 hover:text-red-600 gap-2">
-                    <LogOut className="w-4 h-4" /> Logout
+
+                  <Link to={dashboardPath}>
+                    <Button variant="outline" className="w-full justify-start gap-2">
+                      <LayoutDashboard className="w-4 h-4 text-orange-500" />
+                      Dashboard
+                    </Button>
+                  </Link>
+                  <Link to={profilePath}>
+                    <Button variant="outline" className="w-full justify-start gap-2">
+                      <User className="w-4 h-4" />
+                      Profile
+                    </Button>
+                  </Link>
+                  <Button
+                    onClick={handleLogout}
+                    variant="outline"
+                    className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 gap-2"
+                  >
+                    <LogOut className="w-4 h-4" /> Log out
                   </Button>
                 </>
               ) : (
