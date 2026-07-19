@@ -5,9 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Calendar } from "@/components/ui/calendar";
+import { Textarea } from "@/components/ui/textarea";
 import PageLayout from "@/components/Layout/PageLayout";
-import { getProperty, getPropertyBookedDates } from "@/lib/api";
-import { useQuery } from "@tanstack/react-query";
+import { getProperty, getPropertyBookedDates, getPropertyReviews, submitReview, type Review } from "@/lib/api";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/context/AuthContext";
+import { useToast } from "@/components/ui/use-toast";
 import { 
   MapPin, 
   Star, 
@@ -25,16 +28,52 @@ import {
   ArrowLeft,
   CheckCircle,
   Clock,
-  DollarSign
+  DollarSign,
+  MessageSquare,
+  Send
 } from "lucide-react";
+
+// Star Rating helper
+const StarRating = ({ rating, size = 'sm', interactive = false, onRate }: {
+  rating: number;
+  size?: 'sm' | 'lg';
+  interactive?: boolean;
+  onRate?: (r: number) => void;
+}) => {
+  const [hovered, setHovered] = useState(0);
+  const stars = [1, 2, 3, 4, 5];
+  const iconClass = size === 'lg' ? 'w-7 h-7' : 'w-4 h-4';
+  return (
+    <div className="flex gap-0.5">
+      {stars.map(s => (
+        <Star
+          key={s}
+          className={`${iconClass} transition-colors ${
+            s <= (interactive ? (hovered || rating) : rating)
+              ? 'fill-amber-400 text-amber-400'
+              : 'text-gray-300 fill-gray-200'
+          } ${interactive ? 'cursor-pointer' : ''}`}
+          onClick={() => interactive && onRate?.(s)}
+          onMouseEnter={() => interactive && setHovered(s)}
+          onMouseLeave={() => interactive && setHovered(0)}
+        />
+      ))}
+    </div>
+  );
+};
 
 const PropertyDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [isVisible, setIsVisible] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewComment, setReviewComment] = useState('');
 
   useEffect(() => {
     setIsVisible(true);
@@ -52,8 +91,32 @@ const PropertyDetail = () => {
     enabled: !!id
   });
 
+  const { data: reviews = [], isLoading: reviewsLoading } = useQuery<Review[]>({
+    queryKey: ['property-reviews', id],
+    queryFn: () => getPropertyReviews(id as string),
+    enabled: !!id
+  });
+
+  const reviewMutation = useMutation({
+    mutationFn: () => submitReview(id as string, reviewRating, reviewComment),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['property-reviews', id] });
+      queryClient.invalidateQueries({ queryKey: ['property', id] });
+      setReviewRating(0);
+      setReviewComment('');
+      toast({ title: 'Review submitted!', description: 'Thank you for your feedback.' });
+    },
+    onError: (err: any) => {
+      toast({ title: 'Failed to submit', description: err.message, variant: 'destructive' });
+    },
+  });
+
   // Convert booked date strings (YYYY-MM-DD) to Date objects for the Calendar
   const disabledDays = bookedDates.map(d => new Date(d + 'T00:00:00'));
+
+  const avgRating = reviews.length
+    ? Math.round((reviews.reduce((s, r) => s + r.rating, 0) / reviews.length) * 10) / 10
+    : 0;
 
   if (isLoading) {
     return (
@@ -276,6 +339,101 @@ const PropertyDetail = () => {
                       ))}
                     </div>
                   </div>
+                </CardContent>
+              </Card>
+
+              {/* ── Reviews ─────────────────────────────────────── */}
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center justify-between">
+                    <span className="flex items-center gap-2">
+                      <MessageSquare className="w-5 h-5 text-primary" />
+                      Reviews
+                      {reviews.length > 0 && (
+                        <Badge variant="secondary" className="text-xs">{reviews.length}</Badge>
+                      )}
+                    </span>
+                    {reviews.length > 0 && (
+                      <span className="flex items-center gap-1 text-sm font-medium">
+                        <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                        {avgRating} avg
+                      </span>
+                    )}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-5">
+                  {reviewsLoading && (
+                    <div className="space-y-3">
+                      {[1, 2].map(i => (
+                        <div key={i} className="h-20 bg-muted animate-pulse rounded-xl" />
+                      ))}
+                    </div>
+                  )}
+
+                  {!reviewsLoading && reviews.length === 0 && (
+                    <div className="py-8 text-center">
+                      <MessageSquare className="w-10 h-10 text-gray-300 mx-auto mb-2" />
+                      <p className="text-sm text-muted-foreground">No reviews yet. Be the first!</p>
+                    </div>
+                  )}
+
+                  {!reviewsLoading && reviews.length > 0 && (
+                    <div className="space-y-4">
+                      {reviews.map(review => (
+                        <div key={review.id} className="flex gap-3 p-4 bg-secondary/10 rounded-xl">
+                          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 text-sm font-bold text-primary">
+                            {review.user?.name?.[0]?.toUpperCase() ?? '?'}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between gap-2 mb-1">
+                              <span className="font-semibold text-sm truncate">{review.user?.name ?? 'Student'}</span>
+                              <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                                {new Date(review.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                              </span>
+                            </div>
+                            <StarRating rating={review.rating} size="sm" />
+                            {review.comment && (
+                              <p className="text-sm text-muted-foreground mt-2 leading-relaxed">{review.comment}</p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Submit Review Form — only for authenticated students */}
+                  {isAuthenticated && user?.role === 'STUDENT' && (
+                    <>
+                      <Separator />
+                      <div className="space-y-3">
+                        <h4 className="font-semibold text-sm">Leave a Review</h4>
+                        <div className="space-y-1">
+                          <p className="text-xs text-muted-foreground">Your rating *</p>
+                          <StarRating
+                            rating={reviewRating}
+                            size="lg"
+                            interactive
+                            onRate={setReviewRating}
+                          />
+                        </div>
+                        <Textarea
+                          placeholder="Share your experience (optional)"
+                          value={reviewComment}
+                          onChange={e => setReviewComment(e.target.value)}
+                          className="resize-none"
+                          rows={3}
+                        />
+                        <Button
+                          onClick={() => reviewMutation.mutate()}
+                          disabled={reviewRating === 0 || reviewMutation.isPending}
+                          className="w-full gap-2"
+                        >
+                          <Send className="w-4 h-4" />
+                          {reviewMutation.isPending ? 'Submitting...' : 'Submit Review'}
+                        </Button>
+                      </div>
+                    </>
+                  )}
                 </CardContent>
               </Card>
             </div>

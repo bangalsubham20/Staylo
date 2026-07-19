@@ -20,6 +20,21 @@ export interface User {
   role: "STUDENT" | "OWNER";
 }
 
+export interface Review {
+  id: number;
+  rating: number;
+  comment: string;
+  createdAt: string;
+  user: {
+    id: string;
+    name: string;
+  };
+  property: {
+    id: string;
+    title: string;
+  };
+}
+
 // Helper to make authorized fetch requests
 const authFetch = async (url: string, options: RequestInit = {}): Promise<Response> => {
   const token = localStorage.getItem("staylo_token");
@@ -80,6 +95,25 @@ export const getPropertyBookedDates = async (id: string): Promise<string[]> => {
   const response = await fetch(`${API_BASE_URL}/bookings/property/${id}/dates`);
   if (!response.ok) {
     return [];
+  }
+  return response.json();
+};
+// Reviews API
+export const getPropertyReviews = async (propertyId: string): Promise<Review[]> => {
+  const response = await fetch(`${API_BASE_URL}/reviews/property/${propertyId}`);
+  if (!response.ok) return [];
+  return response.json();
+};
+
+export const submitReview = async (propertyId: string, rating: number, comment: string): Promise<Review> => {
+  const response = await authFetch(`${API_BASE_URL}/reviews`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ propertyId: Number(propertyId), rating, comment }),
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.message || "Failed to submit review");
   }
   return response.json();
 };
