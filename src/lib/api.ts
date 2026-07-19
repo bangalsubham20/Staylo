@@ -32,8 +32,26 @@ const authFetch = async (url: string, options: RequestInit = {}): Promise<Respon
   return fetch(url, { ...options, headers });
 };
 
-export const getProperties = async (): Promise<Property[]> => {
-  const response = await fetch(`${API_BASE_URL}/properties`);
+export interface PropertyFilters {
+  location?: string;
+  type?: string;
+  minPrice?: number;
+  maxPrice?: number;
+}
+
+export const getProperties = async (filters?: PropertyFilters): Promise<Property[]> => {
+  const query = new URLSearchParams();
+  if (filters) {
+    if (filters.location) query.append("location", filters.location);
+    if (filters.type) query.append("type", filters.type);
+    if (filters.minPrice !== undefined) query.append("minPrice", filters.minPrice.toString());
+    if (filters.maxPrice !== undefined) query.append("maxPrice", filters.maxPrice.toString());
+  }
+  
+  const queryString = query.toString();
+  const url = `${API_BASE_URL}/properties${queryString ? `?${queryString}` : ""}`;
+  
+  const response = await fetch(url);
   if (!response.ok) {
     throw new Error('Network response was not ok');
   }

@@ -20,8 +20,21 @@ const Properties = () => {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const { data: properties = [], isLoading } = useQuery({
-    queryKey: ['properties'],
-    queryFn: getProperties
+    queryKey: ['properties', location, type, priceRange],
+    queryFn: () => {
+      let minPrice: number | undefined;
+      let maxPrice: number | undefined;
+      if (priceRange === "under-10000") maxPrice = 10000;
+      else if (priceRange === "10000-20000") { minPrice = 10000; maxPrice = 20000; }
+      else if (priceRange === "over-20000") minPrice = 20000;
+
+      return getProperties({
+        location: location !== "all" ? location : undefined,
+        type: type !== "all" ? type : undefined,
+        minPrice,
+        maxPrice
+      });
+    }
   });
 
   const filteredProperties = useMemo(() => {
@@ -29,15 +42,8 @@ const Properties = () => {
     const result = properties.filter((property) => {
       const matchesQuery = !normalizedQuery || 
         [property.title, property.location, property.type, ...property.amenities].join(" ").toLowerCase().includes(normalizedQuery);
-      const matchesLocation = location === "all" || property.location.toLowerCase().includes(location.toLowerCase());
-      const matchesType = type === "all" || property.type.toLowerCase() === type.toLowerCase();
       
-      let matchesPrice = true;
-      if (priceRange === "under-10000") matchesPrice = property.price < 10000;
-      else if (priceRange === "10000-20000") matchesPrice = property.price >= 10000 && property.price <= 20000;
-      else if (priceRange === "over-20000") matchesPrice = property.price > 20000;
-
-      return matchesQuery && matchesLocation && matchesType && matchesPrice;
+      return matchesQuery;
     });
 
     return result.sort((a, b) => {
@@ -46,7 +52,7 @@ const Properties = () => {
       if (sort === "rating") return b.rating - a.rating;
       return b.reviewCount - a.reviewCount; // recommended
     });
-  }, [location, priceRange, query, sort, type, properties]);
+  }, [query, sort, properties]);
 
   const clearFilters = () => {
     setQuery("");
