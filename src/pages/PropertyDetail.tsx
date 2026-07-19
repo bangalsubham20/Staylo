@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Calendar } from "@/components/ui/calendar";
 import PageLayout from "@/components/Layout/PageLayout";
-import { getProperty } from "@/lib/api";
+import { getProperty, getPropertyBookedDates } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { 
   MapPin, 
@@ -14,7 +15,6 @@ import {
   Share2, 
   Phone, 
   Mail, 
-  Calendar,
   Users,
   Wifi,
   Car,
@@ -34,6 +34,7 @@ const PropertyDetail = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
   useEffect(() => {
     setIsVisible(true);
@@ -44,6 +45,15 @@ const PropertyDetail = () => {
     queryFn: () => getProperty(id as string),
     enabled: !!id
   });
+
+  const { data: bookedDates = [] } = useQuery<string[]>({
+    queryKey: ['property-booked-dates', id],
+    queryFn: () => getPropertyBookedDates(id as string),
+    enabled: !!id
+  });
+
+  // Convert booked date strings (YYYY-MM-DD) to Date objects for the Calendar
+  const disabledDays = bookedDates.map(d => new Date(d + 'T00:00:00'));
 
   if (isLoading) {
     return (
@@ -108,7 +118,9 @@ const PropertyDetail = () => {
   };
 
   const handleBookNow = () => {
-    navigate(`/payment/${property.id}`);
+    if (!selectedDate) return;
+    const dateStr = selectedDate.toISOString().split('T')[0];
+    navigate(`/payment/${property.id}?date=${dateStr}`);
   };
 
   const handleContactOwner = () => {
@@ -336,27 +348,43 @@ const PropertyDetail = () => {
                 </CardContent>
               </Card>
 
-              {/* Availability */}
+              {/* Availability Calendar */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Availability</CardTitle>
+                  <CardTitle className="text-lg">Select Move-in Date</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Calendar className="w-4 h-4 text-primary" />
-                    <span>{property.availability}</span>
-                  </div>
+                <CardContent className="flex flex-col items-center gap-3">
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={setSelectedDate}
+                    disabled={[
+                      { before: new Date() },
+                      ...disabledDays
+                    ]}
+                    className="rounded-md border w-full"
+                  />
+                  {selectedDate ? (
+                    <p className="text-sm text-center font-medium text-primary">
+                      ✓ Moving in on {selectedDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    </p>
+                  ) : (
+                    <p className="text-xs text-muted-foreground text-center">
+                      Greyed-out dates are already booked. Select an available date to proceed.
+                    </p>
+                  )}
                 </CardContent>
               </Card>
 
               {/* Book Now Button */}
               <Button
                 onClick={handleBookNow}
+                disabled={!selectedDate}
                 size="lg"
-                className="w-full bg-primary hover:bg-primary-dark text-lg py-6"
+                className="w-full bg-primary hover:bg-primary-dark text-lg py-6 disabled:opacity-50"
               >
                 <DollarSign className="w-5 h-5 mr-2" />
-                Book Now
+                {selectedDate ? 'Book Now' : 'Select a Date to Book'}
               </Button>
             </div>
           </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -36,6 +36,8 @@ const Payment = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [searchParams] = useSearchParams();
+  const selectedMoveInDate = searchParams.get('date') || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
   // Fetch property details from API
   const { data: propertySummary, isLoading: propertyLoading, error } = useQuery({
@@ -111,7 +113,7 @@ const Payment = () => {
         propertyId: Number(property.id),
         paymentMethod,
         amount: totalAmount,
-        moveInDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0] // 1 week from now
+        moveInDate: selectedMoveInDate
       });
 
       toast({

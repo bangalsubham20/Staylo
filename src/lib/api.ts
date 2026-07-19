@@ -76,6 +76,14 @@ export const getProperty = async (id: string): Promise<Property> => {
   };
 };
 
+export const getPropertyBookedDates = async (id: string): Promise<string[]> => {
+  const response = await fetch(`${API_BASE_URL}/bookings/property/${id}/dates`);
+  if (!response.ok) {
+    return [];
+  }
+  return response.json();
+};
+
 // Auth API calls
 export const loginUser = async (email: string, password: string) => {
   const response = await fetch(`${API_BASE_URL}/auth/login`, {
