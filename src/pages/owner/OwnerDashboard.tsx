@@ -11,6 +11,7 @@ import Navbar from "@/components/Layout/Navbar";
 import { useAuth } from "@/context/AuthContext";
 import { getOwnerProperties, getOwnerBookings, deleteOwnerProperty } from "@/lib/api";
 import type { OwnerProperty, Booking } from "@/lib/api";
+import AddPropertyDialog from "./AddPropertyDialog";
 import { 
   Plus, 
   Eye, 
@@ -148,12 +149,14 @@ const OwnerDashboard = () => {
                 </p>
               </div>
             </div>
-            <Button
-              className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white shadow-md hover:shadow-orange-500/25 transition-all duration-300 gap-2"
-            >
-              <Plus className="w-4 h-4" />
-              Add Property
-            </Button>
+            <AddPropertyDialog>
+              <Button
+                className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white shadow-md hover:shadow-orange-500/25 transition-all duration-300 gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                Add Property
+              </Button>
+            </AddPropertyDialog>
           </div>
 
           {/* ── Stats Cards ────────────────────────────────────── */}
@@ -223,7 +226,7 @@ const OwnerDashboard = () => {
                   </CardContent>
                 </Card>
               );
-              return to ? <Link to={to} key={label}>{content}</Link> : <div key={label}>{content}</div>;
+              return to ? <Link to={to} key={label}>{content}</Link> : label === "Add Property" ? <AddPropertyDialog key={label}>{content}</AddPropertyDialog> : <div key={label}>{content}</div>;
             })}
           </div>
 
@@ -273,10 +276,12 @@ const OwnerDashboard = () => {
                     <p className="text-sm text-gray-400 dark:text-gray-500 mb-5 max-w-xs">
                       Start earning by listing your property for students.
                     </p>
-                    <Button className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white gap-2">
-                      <Plus className="w-4 h-4" />
-                      Add Your First Property
-                    </Button>
+                    <AddPropertyDialog>
+                      <Button className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white gap-2">
+                        <Plus className="w-4 h-4" />
+                        Add Your First Property
+                      </Button>
+                    </AddPropertyDialog>
                   </div>
                 )}
 
@@ -423,10 +428,12 @@ const OwnerDashboard = () => {
                   <p className="text-orange-100/90 mb-6 max-w-md mx-auto text-sm sm:text-base">
                     Connect with thousands of students looking for accommodation and start earning today.
                   </p>
-                  <Button size="lg" className="bg-white text-orange-600 hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl">
-                    <Plus className="w-5 h-5 mr-2" />
-                    List Your First Property
-                  </Button>
+                  <AddPropertyDialog>
+                    <Button size="lg" className="bg-white text-orange-600 hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-xl">
+                      <Plus className="w-5 h-5 mr-2" />
+                      List Your First Property
+                    </Button>
+                  </AddPropertyDialog>
                 </CardContent>
               </Card>
             </div>

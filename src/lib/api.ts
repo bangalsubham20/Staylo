@@ -185,6 +185,46 @@ export const getOwnerProperties = async (): Promise<OwnerProperty[]> => {
   }));
 };
 
+// Create a new property listing
+export const createOwnerProperty = async (propertyData: any): Promise<OwnerProperty> => {
+  const response = await authFetch(`${API_BASE_URL}/properties`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(propertyData),
+  });
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({}));
+    throw new Error(errData.message || "Failed to create property");
+  }
+  const data = await response.json();
+  return {
+    ...data,
+    id: data.id.toString(),
+  };
+};
+
+// Upload an image file and return the URL
+export const uploadImage = async (file: File): Promise<string> => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await authFetch(`${API_BASE_URL}/upload`, {
+    method: "POST",
+    // Note: Do not set Content-Type header for FormData, browser sets it automatically with boundary
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errData = await response.json().catch(() => ({}));
+    throw new Error(errData.message || errData.error || "Failed to upload image");
+  }
+
+  const data = await response.json();
+  return data.url;
+};
+
 // Delete a property owned by the current owner
 export const deleteOwnerProperty = async (id: string): Promise<void> => {
   const response = await authFetch(`${API_BASE_URL}/properties/${id}`, {
