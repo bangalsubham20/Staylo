@@ -59,21 +59,6 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
-- Docker & Nginx
-- GitHub Actions CI
-
-## Docker Deployment
-
-Build and run the Staylo frontend with Docker Compose:
-
-```sh
-# Build and run container
-docker-compose up -d --build
-
-# Open application
-http://localhost:8080
-```
-
 
 ## How can I deploy this project?
 
