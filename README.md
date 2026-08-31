@@ -1,73 +1,107 @@
-# Welcome to your Lovable project
+# Staylo 🏠
 
-## Project info
+> A modern, responsive web application for finding verified PGs, hostels, and rental stays near college campuses.
 
-**URL**: https://lovable.dev/projects/8ad1caf9-04f9-4cce-af7e-5b88ba4e35fb
+![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-5-646CFF?style=flat-square&logo=vite&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind-3-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?style=flat-square&logo=docker&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white)
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## ✨ Features
 
-**Use Lovable**
+- 🔍 **Smart Property Search**: Filter accommodations by location, type (PG, Flat, Hostel), and price range.
+- 🛡️ **Verified Listings**: Detailed property pages with photos, amenities, user reviews, and star ratings.
+- 📅 **Interactive Booking**: Seamless booking flow with calendar availability check and instant booking confirmations.
+- 👤 **Dual Portals**:
+  - **Student Portal**: Browse stays, manage bookings, and leave property reviews.
+  - **Owner Portal**: List properties, upload images, track views, and manage booking requests.
+- ⚡ **Blazing Fast**: Powered by Vite and optimized Nginx static asset caching.
+- 🐳 **Container Ready**: Production-grade Docker multi-stage build with SPA client-side routing fallback.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/8ad1caf9-04f9-4cce-af7e-5b88ba4e35fb) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🛠️ Tech Stack
 
-**Use your preferred IDE**
+| Domain | Technologies |
+| :--- | :--- |
+| **Frontend Core** | React 18, TypeScript, Vite |
+| **Styling & UI** | Tailwind CSS, shadcn/ui, Radix UI, Lucide Icons |
+| **State & Fetching** | TanStack React Query, React Router DOM |
+| **DevOps & Infra** | Docker, Nginx, Docker Compose, GitHub Actions CI |
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+---
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## 🚀 Getting Started
 
-Follow these steps:
+### Prerequisites
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+Ensure you have the following installed locally:
+- [Node.js](https://nodejs.org/) (v20 or higher)
+- [npm](https://www.npmjs.com/) or [bun](https://bun.sh/)
+- [Docker](https://www.docker.com/) *(optional, for containerized running)*
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+---
 
-# Step 3: Install the necessary dependencies.
-npm i
+### Local Development
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/your-username/Staylo.git
+   cd Staylo
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Configure Environment Variables**:
+   Copy `.env.example` to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+   *(Default backend API endpoint: `VITE_API_URL=http://localhost:8081/api`)*
+
+4. **Start Development Server**:
+   ```bash
+   npm run dev
+   ```
+   Open `http://localhost:8080` in your browser.
+
+---
+
+## 🐳 Running with Docker
+
+### Using Docker Compose (Recommended)
+```bash
+docker-compose up -d --build
+```
+Access the application at `http://localhost:8080`.
+
+### Using Docker CLI
+```bash
+# Build the Docker image
+docker build -t staylo-frontend .
+
+# Run the container
+docker run -d -p 8080:80 --name staylo-frontend staylo-frontend
 ```
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🧪 Linting & Quality Checks
 
-**Use GitHub Codespaces**
+Run ESLint code verification:
+```bash
+npm run lint
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+---
 
-## What technologies are used for this project?
+## 📄 License
 
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/8ad1caf9-04f9-4cce-af7e-5b88ba4e35fb) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Distributed under the MIT License. See `LICENSE` for details.
