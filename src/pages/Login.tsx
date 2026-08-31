@@ -37,10 +37,11 @@ const Login = () => {
       });
 
       navigate("/");
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as Error;
       toast({
         title: "Login Failed",
-        description: err.message || "Invalid email or password",
+        description: error.message || "Invalid email or password",
         variant: "destructive",
       });
     } finally {

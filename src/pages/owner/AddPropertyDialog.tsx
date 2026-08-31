@@ -57,7 +57,7 @@ const AddPropertyDialog = ({ children }: AddPropertyDialogProps) => {
       setOpen(false);
       resetForm();
     },
-    onError: (err: any) => {
+    onError: (err: Error) => {
       toast({
         title: "Error",
         description: err.message || "Failed to list property.",

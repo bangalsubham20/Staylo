@@ -123,10 +123,11 @@ const Payment = () => {
 
       // Redirect to success page with backend custom booking code
       navigate(`/booking-success/${booking.bookingCode}`);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as Error;
       toast({
         title: "Payment Failed",
-        description: err.message || "Failed to process booking. Please try again.",
+        description: error.message || "Failed to process booking. Please try again.",
         variant: "destructive"
       });
     } finally {

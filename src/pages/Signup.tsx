@@ -40,10 +40,11 @@ const Signup = () => {
         description: "Account created. You can now log in.",
       });
       navigate("/login");
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as Error;
       toast({
         title: "Registration Failed",
-        description: err.message || "An error occurred during sign up",
+        description: error.message || "An error occurred during sign up",
         variant: "destructive",
       });
     } finally {

@@ -106,7 +106,7 @@ const PropertyDetail = () => {
       setReviewComment('');
       toast({ title: 'Review submitted!', description: 'Thank you for your feedback.' });
     },
-    onError: (err: any) => {
+    onError: (err: Error) => {
       toast({ title: 'Failed to submit', description: err.message, variant: 'destructive' });
     },
   });

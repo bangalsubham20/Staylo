@@ -72,7 +72,7 @@ export const getProperties = async (filters?: PropertyFilters): Promise<Property
   }
   const data = await response.json();
   
-  return data.map((p: any) => ({
+  return data.map((p: Property) => ({
     ...p,
     id: p.id.toString(),
   }));
@@ -136,7 +136,7 @@ export const loginUser = async (email: string, password: string) => {
   return response.json(); // returns token and user details
 };
 
-export const registerUser = async (userData: any) => {
+export const registerUser = async (userData: Record<string, unknown>) => {
   const response = await fetch(`${API_BASE_URL}/auth/register`, {
     method: "POST",
     headers: {
@@ -221,14 +221,14 @@ export const getOwnerProperties = async (): Promise<OwnerProperty[]> => {
     throw new Error("Failed to fetch your properties");
   }
   const data = await response.json();
-  return data.map((p: any) => ({
+  return data.map((p: Property) => ({
     ...p,
     id: p.id.toString(),
   }));
 };
 
 // Create a new property listing
-export const createOwnerProperty = async (propertyData: any): Promise<OwnerProperty> => {
+export const createOwnerProperty = async (propertyData: Partial<Property>): Promise<OwnerProperty> => {
   const response = await authFetch(`${API_BASE_URL}/properties`, {
     method: "POST",
     headers: {

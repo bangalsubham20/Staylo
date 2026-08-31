@@ -51,10 +51,11 @@ const StudentSignup = () => {
       });
 
       navigate('/student/login');
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as Error;
       toast({
         title: "Registration Failed",
-        description: err.message || "Something went wrong. Please try again.",
+        description: error.message || "Something went wrong. Please try again.",
         variant: "destructive"
       });
     } finally {

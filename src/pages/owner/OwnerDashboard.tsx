@@ -93,7 +93,7 @@ const OwnerDashboard = () => {
         description: "The property has been successfully removed.",
       });
     },
-    onError: (err: any) => {
+    onError: (err: Error) => {
       toast({
         title: "Failed to delete",
         description: err.message || "An error occurred while deleting the property.",
